@@ -1,0 +1,10 @@
+<h1>{{title}}</h1>
+
+<ul>
+    @for (u of users; track u.id) {
+        <li>
+            {{u.id}} - {{u.userName}}
+        </li>
+    }
+    
+</ul>

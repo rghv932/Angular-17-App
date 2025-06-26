@@ -1,6 +1,8 @@
-import { Component, EventEmitter, inject, OnInit, output, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ValidatorFn, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, inject, OnInit, output } from '@angular/core';
+import { AbstractControl, FormGroup, FormsModule, ValidatorFn, Validators } from '@angular/forms';
+
+import { ToastrService } from 'ngx-toastr';
+
 import { AccountService } from '../_services/account.service';
 
 @Component({
@@ -12,12 +14,13 @@ import { AccountService } from '../_services/account.service';
 })
 export class RegisterComponent implements OnInit {
   private accountService = inject(AccountService);
+  private toastService = inject(ToastrService);
   cancelRegister = output<boolean>();
   registerForm: FormGroup;
   maxDate: Date;
   validationErrors: string[] = [];
 
-  // constructor(private accountService:AccountService,private toastService:ToastrService,
+  // constructor(private accountService:AccountService,,
   //   private fb:FormBuilder,private router:Router) { }
 
   ngOnInit(): void {
@@ -55,6 +58,7 @@ export class RegisterComponent implements OnInit {
           this.cancel();
         },
         error: error => {
+          this.toastService.error(error.error)
           this.validationErrors = error;
         }
       });

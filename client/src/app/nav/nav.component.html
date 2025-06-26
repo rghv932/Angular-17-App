@@ -2,8 +2,9 @@
 	<div class="container-fluid">
 		<a class="navbar-brand" routerLink="/" routerLinkActive="active">Dating App</a>
 
+
+	<ul class="navbar-nav mr-auto">
 		@if (accountService.currentUser()) {
-		<ul class="navbar-nav mr-auto">
 			<li class="nav-item">
 				<a class="nav-link" routerLink="/members" routerLinkActive="active">Matches</a>
 			</li>
@@ -13,11 +14,12 @@
 			<li class="nav-item">
 				<a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a>
 			</li>
-			<li class="nav-item">
-				<a class="nav-link" routerLink="/errors" routerLinkActive="active">Errors</a>
-			</li>
-		</ul>
 		}
+		<li class="nav-item">
+			<a class="nav-link" routerLink="/errors" routerLinkActive="active">Errors</a>
+		</li>
+	</ul>
+
 
 		<!-- <ul class="navbar-nav mr-auto">
       <ng-container *ngIf="true"> 
@@ -37,10 +39,10 @@
     </ul> -->
 
 		@if (accountService.currentUser()) {
-			<div class="dropdown" dropdown>
+		<div class="dropdown" dropdown>
 			<img src="{{'./assets/user.png'}}" alt="Raghav">
 			<!-- user.photoUrl ||         {{user.username}} -->
-			<a class="dropdown-toggle text-light ml-2" dropdownToggle>Welcome {{user.knownAs | titlecase}}</a>
+			<a class="dropdown-toggle text-light ml-2" dropdownToggle>Welcome {{accountService.currentUser()?.username | titlecase}}</a>
 			<div class="dropdown-menu mt-3" *dropdownMenu>
 				<a routerLink='/member/edit' class="dropdown-item">Edit Profile</a>
 				<div class="dropdown-divider"></div>
@@ -61,7 +63,8 @@
 
 		@if (!accountService.currentUser()) {
 		<form #loginForm="ngForm" class="d-flex" (ngSubmit)="login()">
-			<input name="username" [(ngModel)]="model.username" class="form-control mr-2" type="text" placeholder="Username">
+			<input name="username" [(ngModel)]="model.username" class="form-control mr-2" type="text"
+				placeholder="Username">
 			<input name="password" [(ngModel)]="model.password" class="form-control mr-2" type="password"
 				placeholder="Password">
 

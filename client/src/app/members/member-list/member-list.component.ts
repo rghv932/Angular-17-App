@@ -13,29 +13,29 @@ import { MemberCardComponent } from '../member-card/member-card.component';
   styleUrl: './member-list.component.css'
 })
 export class MemberListComponent implements OnInit {
-  private memberService = inject(MembersService);
-  members: Member[];
-  pagination: Pagination;
-  userParams: UserParams;
-  user: User;
-  genderList = [{ value: 'male', display: 'Males' }, { value: 'female', display: 'Females' }];
+  memberService = inject(MembersService);
+  // pagination: Pagination;
+  // userParams: UserParams;
+  // user: User;
+  // genderList = [{ value: 'male', display: 'Males' }, { value: 'female', display: 'Females' }];
   
-  constructor() { 
-    this.userParams = this.memberService.getUserParams();
-  }
+  // constructor() { 
+  //   this.userParams = this.memberService.getUserParams();
+  // }
 
   ngOnInit(): void {
-    this.loadMembers();
+    if(this.memberService.members().length === 0) this.loadMembers();
   }
 
   loadMembers() {
-    this.memberService.setUserParams(this.userParams);
-    this.memberService.getMembers(this.userParams).subscribe({
-      next: response =>  {
-        this.members = response.result;
-        this.pagination = response.pagination;
-      }
-    });
+    this.memberService.getMembers()
+    // this.memberService.setUserParams(this.userParams);
+    // this.memberService.getMembers(this.userParams).subscribe({
+    //   next: response =>  {
+    //     this.members = response.result;
+    //     this.pagination = response.pagination;
+    //   }
+    // });
   }
 
   resetFilters() {

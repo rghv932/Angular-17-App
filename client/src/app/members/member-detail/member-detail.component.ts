@@ -59,7 +59,7 @@ export class MemberDetailComponent implements OnInit {
         member.photos.map((p: any)=>{
           this.galleryImages.push(new ImageItem({src: p.url, thumb: p.url}))
         })
-        this.galleryImages = this.getImages();
+        // this.galleryImages = this.getImages();
       }
     });
   }

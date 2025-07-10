@@ -1,17 +1,18 @@
-import { NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
+
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-test-errors',
   standalone: true,
-  imports: [NgIf, NgFor],
+  imports: [],
   templateUrl: './test-errors.component.html',
   styleUrl: './test-errors.component.css'
 })
 export class TestErrorsComponent implements OnInit {
   private http = inject(HttpClient);
-  baseUrl='https://localhost:7190/api/';
+  baseUrl= environment.apiUrl;
   validationErrors: string[] = [];
 
   ngOnInit(): void {

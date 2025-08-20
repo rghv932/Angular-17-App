@@ -1,19 +1,22 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { NgIf } from '@angular/common';
 
-import { User } from '../../_models/user';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+
 import { MembersService } from '../../_services/members.service';
-import { Member } from '../../_models/member';
 import { MemberCardComponent } from '../member-card/member-card.component';
 
 @Component({
   selector: 'app-member-list',
   standalone: true,
-  imports: [MemberCardComponent],
+  imports: [MemberCardComponent, PaginationModule, NgIf],
   templateUrl: './member-list.component.html',
   styleUrl: './member-list.component.css'
 })
 export class MemberListComponent implements OnInit {
   memberService = inject(MembersService);
+  pageNumber = 1;
+  pageSize = 5;
   // pagination: Pagination;
   // userParams: UserParams;
   // user: User;
@@ -24,11 +27,11 @@ export class MemberListComponent implements OnInit {
   // }
 
   ngOnInit(): void {
-    if(this.memberService.members().length === 0) this.loadMembers();
+    if(!this.memberService.paginatedResult()) this.loadMembers();
   }
 
   loadMembers() {
-    this.memberService.getMembers()
+    this.memberService.getMembers(this.pageNumber, this.pageSize);
     // this.memberService.setUserParams(this.userParams);
     // this.memberService.getMembers(this.userParams).subscribe({
     //   next: response =>  {
@@ -38,15 +41,18 @@ export class MemberListComponent implements OnInit {
     // });
   }
 
-  resetFilters() {
-    this.userParams = this.memberService.resetUserParams();
-    this.loadMembers();
-  }
+  // resetFilters() {
+  //   this.userParams = this.memberService.resetUserParams();
+  //   this.loadMembers();
+  // }
 
   pageChanged(event: any) {
-    this.userParams.pageNumber = event.page;
-    this.memberService.setUserParams(this.userParams);
-    this.loadMembers();
+    // this.userParams.pageNumber = event.page;
+    // this.memberService.setUserParams(this.userParams);
+    if(this.pageNumber !== event.page){
+      this.pageNumber = event.page;
+      this.loadMembers();
+    }
   }
 
 }

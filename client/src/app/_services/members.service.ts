@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 
 import { map, of, tap } from 'rxjs';
@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { Member } from '../_models/member';
 import { AccountService } from './account.service';
 import { Photo } from '../_models/photo';
+import { PaginatedResult } from '../_models/pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class MembersService {
   private http= inject(HttpClient);
   // private accountService= inject(AccountService);
   baseUrl=environment.apiUrl;
-  members=signal<Member[]>([]);
+  // members=signal<Member[]>([]);
+  paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
   //memberCache = new Map();
   // memberCache = new Map();
   // user: User;
@@ -41,10 +43,27 @@ export class MembersService {
   //   return this.userParams;
   // }
 
-  getMembers(){
-    if (this.members.length > 0) return of(this.members);
-    return this.http.get<Member[]>(this.baseUrl + 'users').subscribe({
-      next: members => this.members.set(members)
+  // getMembers(){
+  //   if (this.members.length > 0) return of(this.members);
+  //   return this.http.get<Member[]>(this.baseUrl + 'users').subscribe({
+  //     next: members => this.members.set(members)
+  //   })
+  // }
+
+  getMembers(pageNumber?: number, pageSize?: number){
+    let params = new HttpParams();
+
+    if(pageNumber && pageSize){
+      params = params.append('pageNumber', pageNumber);
+      params = params.append('pageSize', pageSize);
+    }
+    return this.http.get<Member[]>(this.baseUrl + 'users', { observe: 'response', params }).subscribe({
+      next: response  => {
+        this.paginatedResult.set({
+          items: response.body as Member[],
+          pagination: JSON.parse(response.headers.get('Pagination')!)
+        })
+      }
     })
   }
 
@@ -69,22 +88,22 @@ export class MembersService {
   // }
 
   getMember(username: string) {
-    const member = this.members().find(x=>x.username === username);
-    // const member = [...this.memberCache.values()]
-    //   .reduce((arr, elem) => arr.concat(elem.result), [])
-    //   .find((member: Member) => member.username === username);
+    // const member = this.members().find(x=>x.username === username);
+    // // const member = [...this.memberCache.values()]
+    // //   .reduce((arr, elem) => arr.concat(elem.result), [])
+    // //   .find((member: Member) => member.username === username);
 
-    if (member) {
-      return of(member);
-    }
+    // if (member) {
+    //   return of(member);
+    // }
     return this.http.get<Member>(this.baseUrl + 'users/' + username);
   }
 
   updateMember(member: Member) {
     return this.http.put(this.baseUrl + 'users', member).pipe(
-      tap(() => {
-        this.members.update(members => members.map(m=>m.username === member.username ? member : m))
-      })
+      // tap(() => {
+      //   this.members.update(members => members.map(m=>m.username === member.username ? member : m))
+      // })
       // map(() => {
       //   const index = this.members.indexOf(member);
       //   this.members[index] = member;
@@ -94,27 +113,27 @@ export class MembersService {
 
   setMainPhoto(photo: Photo) {
     return this.http.put(this.baseUrl + 'users/set-main-photo/' + photo.id, {}).pipe(
-      tap(() => {
-        this.members.update(members => members.map(m=>{
-          if(m.photos.includes(photo)){
-            m.photoUrl = photo.url;
-          }
-          return m;
-        }))
-      })
+      // tap(() => {
+      //   this.members.update(members => members.map(m=>{
+      //     if(m.photos.includes(photo)){
+      //       m.photoUrl = photo.url;
+      //     }
+      //     return m;
+      //   }))
+      // })
     );
   }
 
   deletePhoto(photo: Photo) {
     return this.http.delete(this.baseUrl + 'users/delete-photo/' + photo.id).pipe(
-      tap(() => {
-        this.members.update(members => members.map(m=>{
-          if(m.photos.includes(photo)){
-            m.photos = m.photos.filter(x=>x.id !== photo.id);
-          }
-          return m;
-        }))
-      })
+      // tap(() => {
+      //   this.members.update(members => members.map(m=>{
+      //     if(m.photos.includes(photo)){
+      //       m.photos = m.photos.filter(x=>x.id !== photo.id);
+      //     }
+      //     return m;
+      //   }))
+      // })
     )
   }
 
